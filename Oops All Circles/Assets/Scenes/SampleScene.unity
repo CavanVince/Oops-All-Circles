@@ -333,6 +333,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 10
+  bulletSpeed: 17
   lineRenderer: {fileID: 1143413242}
   bullet: {fileID: 6521627412418048295, guid: 4b21de551cf5c9a4b961ee4cf4734953, type: 3}
 --- !u!120 &1143413242

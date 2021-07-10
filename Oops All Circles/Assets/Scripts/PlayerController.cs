@@ -70,4 +70,12 @@ public class PlayerController : MonoBehaviour
             spawnedBullet.GetComponent<Rigidbody2D>().AddForce(shootVector * bulletSpeed, ForceMode2D.Impulse);
         }
     }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Power-Up"))
+        {
+            Debug.Log("Power-Up Collected");
+        }
+    }
 }

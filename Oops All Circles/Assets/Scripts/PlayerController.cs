@@ -3,6 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
+enum Powerup 
+{
+    normal,
+    quad
+}
+
 public class PlayerController : MonoBehaviour
 {
     public float moveSpeed;
@@ -13,11 +19,12 @@ public class PlayerController : MonoBehaviour
 
     private Vector2 playerPosition;
     private Vector2 mousePosition;
+    private Powerup powerupStatus;
 
     // Start is called before the first frame update
     void Start()
     {
-
+        powerupStatus = Powerup.normal;
     }
 
     // Update is called once per frame
@@ -54,6 +61,7 @@ public class PlayerController : MonoBehaviour
         lineRenderer.SetPosition(1, mousePosition);
     }
 
+
     /// <summary>
     /// Instantiates a bullet prefab when the player left clicks
     /// </summary>
@@ -61,13 +69,36 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            GameObject spawnedBullet = Instantiate(bullet, transform.position, Quaternion.identity);
-
             //Calculate the vector
             Vector2 shootVector = mousePosition - playerPosition;
             shootVector.Normalize();
 
-            spawnedBullet.GetComponent<Rigidbody2D>().AddForce(shootVector * bulletSpeed, ForceMode2D.Impulse);
+            //Determine if the player has a power-up
+            switch (powerupStatus)
+            {
+                case Powerup.normal:
+                    GameObject spawnedBullet = Instantiate(bullet, transform.position, Quaternion.identity);
+                    spawnedBullet.GetComponent<Rigidbody2D>().AddForce(shootVector * bulletSpeed, ForceMode2D.Impulse);
+                    break;
+
+                case Powerup.quad:
+                    GameObject[] spawnedBullets = new GameObject[4];
+                    for (int i = 0; i < spawnedBullets.Length; i++) 
+                    {
+                        spawnedBullets[i] = Instantiate(bullet, transform.position, Quaternion.identity);
+                    }
+
+                    //Calculate the adjusted shoot vector for the other bullets
+                    Vector2 adjustedShootVector = shootVector;
+                    adjustedShootVector.x = -adjustedShootVector.x;
+
+                    spawnedBullets[0].GetComponent<Rigidbody2D>().AddForce(shootVector * bulletSpeed, ForceMode2D.Impulse);
+                    spawnedBullets[1].GetComponent<Rigidbody2D>().AddForce(-shootVector * bulletSpeed, ForceMode2D.Impulse);
+                    spawnedBullets[2].GetComponent<Rigidbody2D>().AddForce(adjustedShootVector * bulletSpeed, ForceMode2D.Impulse);
+                    spawnedBullets[3].GetComponent<Rigidbody2D>().AddForce(-adjustedShootVector * bulletSpeed, ForceMode2D.Impulse);
+                    break;
+            }
+
         }
     }
 
@@ -75,7 +106,8 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Power-Up"))
         {
-            Debug.Log("Power-Up Collected");
+            powerupStatus = Powerup.quad;
+            Destroy(collision.gameObject);
         }
     }
 }

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
+using Photon.Pun;
 
 enum Powerup 
 {
@@ -21,27 +22,34 @@ public class PlayerController : MonoBehaviour
     private Vector2 mousePosition;
     private Powerup powerupStatus;
 
+    PhotonView view;
+
     // Start is called before the first frame update
     void Start()
     {
+        view = GetComponent<PhotonView>();
         powerupStatus = Powerup.normal;
     }
 
     // Update is called once per frame
     void Update()
     {
-        //Update the player and mouse positions
-        playerPosition = transform.position;
-        mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        //Only run the code if it is the player's specific character
+        if (view.IsMine)
+        {
+            //Update the player and mouse positions
+            playerPosition = transform.position;
+            mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-        //Move the player
-        MovePlayer();
+            //Move the player
+            MovePlayer();
 
-        //Render line for aiming
-        AimLine();
+            //Render line for aiming
+            AimLine();
 
-        //Shoot the bullets
-        ShootBullet();
+            //Shoot the bullets
+            ShootBullet();
+        }
     }
 
     /// <summary>
@@ -77,7 +85,7 @@ public class PlayerController : MonoBehaviour
             switch (powerupStatus)
             {
                 case Powerup.normal:
-                    GameObject spawnedBullet = Instantiate(bullet, transform.position, Quaternion.identity);
+                    GameObject spawnedBullet = PhotonNetwork.Instantiate(bullet.name, transform.position, Quaternion.identity);
                     spawnedBullet.GetComponent<Rigidbody2D>().AddForce(shootVector * bulletSpeed, ForceMode2D.Impulse);
                     break;
 
@@ -85,7 +93,7 @@ public class PlayerController : MonoBehaviour
                     GameObject[] spawnedBullets = new GameObject[4];
                     for (int i = 0; i < spawnedBullets.Length; i++) 
                     {
-                        spawnedBullets[i] = Instantiate(bullet, transform.position, Quaternion.identity);
+                        spawnedBullets[i] = PhotonNetwork.Instantiate(bullet.name, transform.position, Quaternion.identity);
                     }
 
                     //Calculate the adjusted shoot vector for the other bullets

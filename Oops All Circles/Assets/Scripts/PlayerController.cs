@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Photon.Pun;
+using System.Diagnostics;
 
 enum Powerup 
 {
@@ -21,6 +22,7 @@ public class PlayerController : MonoBehaviour
     private Vector2 playerPosition;
     private Vector2 mousePosition;
     private Powerup powerupStatus;
+    private int health;
 
     PhotonView view;
 
@@ -29,6 +31,7 @@ public class PlayerController : MonoBehaviour
     {
         view = GetComponent<PhotonView>();
         powerupStatus = Powerup.normal;
+        health = 1;
     }
 
     // Update is called once per frame
@@ -50,6 +53,8 @@ public class PlayerController : MonoBehaviour
             //Shoot the bullets
             ShootBullet();
         }
+        //End the game if the player's health <= 0
+        GameOver();
     }
 
     /// <summary>
@@ -78,14 +83,14 @@ public class PlayerController : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             //Calculate the vector
-            Vector2 shootVector = mousePosition - playerPosition;
+            Vector3 shootVector = mousePosition - playerPosition;
             shootVector.Normalize();
 
             //Determine if the player has a power-up
             switch (powerupStatus)
             {
                 case Powerup.normal:
-                    GameObject spawnedBullet = PhotonNetwork.Instantiate(bullet.name, transform.position, Quaternion.identity);
+                    GameObject spawnedBullet = PhotonNetwork.Instantiate(bullet.name, transform.position + shootVector, Quaternion.identity);
                     spawnedBullet.GetComponent<Rigidbody2D>().AddForce(shootVector * bulletSpeed, ForceMode2D.Impulse);
                     break;
 
@@ -93,6 +98,7 @@ public class PlayerController : MonoBehaviour
                     GameObject[] spawnedBullets = new GameObject[4];
                     for (int i = 0; i < spawnedBullets.Length; i++) 
                     {
+                        //THIS INSTANTIATION NEEDS TO BE MODIFIED DUE TO THE FACT THAT THE BULLETS SPAWN IN THE PLAYER
                         spawnedBullets[i] = PhotonNetwork.Instantiate(bullet.name, transform.position, Quaternion.identity);
                     }
 
@@ -110,12 +116,27 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Determines if the game is over
+    /// </summary>
+    void GameOver() 
+    {
+        if (health <= 0) 
+        {
+            Destroy(gameObject);
+        }
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Power-Up"))
         {
             powerupStatus = Powerup.quad;
             Destroy(collision.gameObject);
+        }
+        else if (collision.gameObject.CompareTag("Bullet")) 
+        {
+            health--;
         }
     }
 }

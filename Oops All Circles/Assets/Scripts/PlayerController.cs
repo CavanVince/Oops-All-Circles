@@ -16,7 +16,6 @@ public class PlayerController : MonoBehaviour
     public float moveSpeed;
     public float bulletSpeed;
 
-    [SerializeField] private LineRenderer lineRenderer;
     [SerializeField] private GameObject bullet;
 
     private Vector2 playerPosition;
@@ -47,9 +46,6 @@ public class PlayerController : MonoBehaviour
             //Move the player
             MovePlayer();
 
-            //Render line for aiming
-            AimLine();
-
             //Shoot the bullets
             ShootBullet();
         }
@@ -63,15 +59,6 @@ public class PlayerController : MonoBehaviour
     void MovePlayer()
     {
         transform.Translate(Input.GetAxisRaw("Horizontal") * moveSpeed * Time.deltaTime, Input.GetAxisRaw("Vertical") * moveSpeed * Time.deltaTime, 0f);
-    }
-
-    /// <summary>
-    /// Renders the line that the player uses to aim
-    /// </summary>
-    void AimLine()
-    {
-        lineRenderer.SetPosition(0, playerPosition);
-        lineRenderer.SetPosition(1, mousePosition);
     }
 
 
@@ -90,7 +77,8 @@ public class PlayerController : MonoBehaviour
             switch (powerupStatus)
             {
                 case Powerup.normal:
-                    GameObject spawnedBullet = PhotonNetwork.Instantiate(bullet.name, transform.position + shootVector, Quaternion.identity);
+                    //GameObject spawnedBullet = PhotonNetwork.Instantiate(bullet.name, transform.position + shootVector, Quaternion.identity);
+                    GameObject spawnedBullet = Instantiate(bullet, transform.position + shootVector, Quaternion.identity);
                     spawnedBullet.GetComponent<Rigidbody2D>().AddForce(shootVector * bulletSpeed, ForceMode2D.Impulse);
                     break;
 
@@ -137,6 +125,7 @@ public class PlayerController : MonoBehaviour
         else if (collision.gameObject.CompareTag("Bullet")) 
         {
             health--;
+            Destroy(collision.gameObject);
         }
     }
 }

@@ -4,13 +4,12 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    private float timer;
+    public float timer;
     private float wallBounceCounter;
 
     // Start is called before the first frame update
     void Start()
     {
-        timer = 5;
         wallBounceCounter = 1;
     }
 

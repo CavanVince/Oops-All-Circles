@@ -77,8 +77,9 @@ public class PlayerController : MonoBehaviour
             switch (powerupStatus)
             {
                 case Powerup.normal:
-                    //GameObject spawnedBullet = PhotonNetwork.Instantiate(bullet.name, transform.position + shootVector, Quaternion.identity);
-                    GameObject spawnedBullet = Instantiate(bullet, transform.position + shootVector, Quaternion.identity);
+                    
+                    GameObject spawnedBullet = PhotonNetwork.Instantiate(bullet.name, transform.position + shootVector, Quaternion.identity);
+                    //GameObject spawnedBullet = Instantiate(bullet, transform.position + shootVector, Quaternion.identity);
                     spawnedBullet.GetComponent<Rigidbody2D>().AddForce(shootVector * bulletSpeed, ForceMode2D.Impulse);
                     break;
 

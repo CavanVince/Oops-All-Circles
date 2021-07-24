@@ -139,6 +139,7 @@ MonoBehaviour:
   moveSpeed: 10
   bulletSpeed: 17
   bullet: {fileID: 6557580733635154408, guid: 4b21de551cf5c9a4b961ee4cf4734953, type: 3}
+  deathParticles: {fileID: 1012294469571667049, guid: 3cb82e0ede1fd1e43a335b60ad831409, type: 3}
 --- !u!114 &913948414093510873
 MonoBehaviour:
   m_ObjectHideFlags: 0

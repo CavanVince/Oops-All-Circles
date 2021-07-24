@@ -17,6 +17,7 @@ public class PlayerController : MonoBehaviour
     public float bulletSpeed;
 
     [SerializeField] private GameObject bullet;
+    [SerializeField] private GameObject deathParticles;
 
     private Vector2 playerPosition;
     private Vector2 mousePosition;
@@ -49,6 +50,7 @@ public class PlayerController : MonoBehaviour
             //Shoot the bullets
             ShootBullet();
         }
+        
         //End the game if the player's health <= 0
         GameOver();
     }
@@ -77,8 +79,8 @@ public class PlayerController : MonoBehaviour
             switch (powerupStatus)
             {
                 case Powerup.normal:   
-                    GameObject spawnedBullet = PhotonNetwork.Instantiate(bullet.name, transform.position + shootVector, Quaternion.identity);
-                    //GameObject spawnedBullet = Instantiate(bullet, transform.position + shootVector, Quaternion.identity);
+                    GameObject spawnedBullet = PhotonNetwork.Instantiate(bullet.name, transform.position, Quaternion.identity);
+                    //GameObject spawnedBullet = Instantiate(bullet, transform.position, Quaternion.identity);
                     spawnedBullet.GetComponent<Rigidbody2D>().AddForce(shootVector * bulletSpeed, ForceMode2D.Impulse);
                     spawnedBullet.GetComponent<Bullet>().ParentPlayer = gameObject;
                     break;
@@ -110,14 +112,18 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     void GameOver() 
     {
-        if (health <= 0) 
-        {
-            Destroy(gameObject);
-        }
+            if (health <= 0)
+            {
+                PhotonNetwork.Instantiate(deathParticles.name, transform.position, Quaternion.identity);
+                //Instantiate(deathParticles, transform.position, Quaternion.identity);
+                PhotonNetwork.Destroy(gameObject);
+                //Destroy(gameObject);
+            }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        //Only call if it is the client's player being collided with
         if (view.IsMine)
         {
             if (collision.gameObject.CompareTag("Power-Up"))

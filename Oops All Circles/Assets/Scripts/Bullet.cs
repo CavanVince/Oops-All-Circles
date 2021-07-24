@@ -6,6 +6,19 @@ public class Bullet : MonoBehaviour
 {
     public float timer;
     private float wallBounceCounter;
+    private GameObject parentPlayer;
+
+    public GameObject ParentPlayer 
+    {
+        get 
+        {
+            return parentPlayer;
+        }
+        set
+        {
+            parentPlayer = value;
+        }
+    }
 
     // Start is called before the first frame update
     void Start()

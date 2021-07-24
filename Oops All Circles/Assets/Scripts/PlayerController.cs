@@ -76,11 +76,11 @@ public class PlayerController : MonoBehaviour
             //Determine if the player has a power-up
             switch (powerupStatus)
             {
-                case Powerup.normal:
-                    
+                case Powerup.normal:   
                     GameObject spawnedBullet = PhotonNetwork.Instantiate(bullet.name, transform.position + shootVector, Quaternion.identity);
                     //GameObject spawnedBullet = Instantiate(bullet, transform.position + shootVector, Quaternion.identity);
                     spawnedBullet.GetComponent<Rigidbody2D>().AddForce(shootVector * bulletSpeed, ForceMode2D.Impulse);
+                    spawnedBullet.GetComponent<Bullet>().ParentPlayer = gameObject;
                     break;
 
                 case Powerup.quad:
@@ -118,15 +118,21 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Power-Up"))
+        if (view.IsMine)
         {
-            powerupStatus = Powerup.quad;
-            Destroy(collision.gameObject);
-        }
-        else if (collision.gameObject.CompareTag("Bullet")) 
-        {
-            health--;
-            Destroy(collision.gameObject);
+            if (collision.gameObject.CompareTag("Power-Up"))
+            {
+                powerupStatus = Powerup.quad;
+                Destroy(collision.gameObject);
+            }
+            else if (collision.gameObject.CompareTag("Bullet"))
+            {
+                if (collision.GetComponent<Bullet>().ParentPlayer != gameObject)
+                {
+                    health--;
+                    Destroy(collision.gameObject);
+                }
+            }
         }
     }
 }

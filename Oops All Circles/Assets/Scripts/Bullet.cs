@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 public class Bullet : MonoBehaviour
 {
@@ -35,16 +36,17 @@ public class Bullet : MonoBehaviour
         {
             Destroy(gameObject);
         }
-
-        //Determine if the ball hit two walls
-        if (wallBounceCounter < 0) 
-        {
-            Destroy(gameObject);
-        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
         wallBounceCounter--;
+
+        //Determine if the ball hit two walls
+        if (wallBounceCounter < 0)
+        {
+            PhotonNetwork.Destroy(gameObject);
+            //Destroy(gameObject);
+        }
     }
 }

@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 9115253477376586975}
   - component: {fileID: 9115253477376586973}
   - component: {fileID: 913948414093510873}
-  - component: {fileID: -7749107844017612653}
+  - component: {fileID: 3529253435143727632}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -155,15 +155,15 @@ MonoBehaviour:
   ObservedComponentsFoldoutOpen: 1
   Group: 0
   prefixField: -1
-  Synchronization: 3
+  Synchronization: 1
   OwnershipTransfer: 0
   observableSearch: 2
   ObservedComponents:
-  - {fileID: -7749107844017612653}
+  - {fileID: 3529253435143727632}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!114 &-7749107844017612653
+--- !u!114 &3529253435143727632
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -178,10 +178,10 @@ MonoBehaviour:
   m_PositionModel:
     SynchronizeEnabled: 1
     TeleportEnabled: 1
-    TeleportIfDistanceGreaterThan: 3
-    InterpolateOption: 2
+    TeleportIfDistanceGreaterThan: 10
+    InterpolateOption: 4
     InterpolateMoveTowardsSpeed: 1
-    InterpolateLerpSpeed: 1
+    InterpolateLerpSpeed: 15
     ExtrapolateOption: 0
     ExtrapolateSpeed: 1
     ExtrapolateIncludingRoundTripTime: 1

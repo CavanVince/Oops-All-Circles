@@ -29,6 +29,9 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //Increase the amount of times the server is updated
+        PhotonNetwork.SerializationRate = 50;
+
         view = GetComponent<PhotonView>();
         powerupStatus = Powerup.normal;
         health = 1;
@@ -50,9 +53,6 @@ public class PlayerController : MonoBehaviour
             //Shoot the bullets
             ShootBullet();
         }
-        
-        //End the game if the player's health <= 0
-        GameOver();
     }
 
     /// <summary>
@@ -137,6 +137,9 @@ public class PlayerController : MonoBehaviour
                 {
                     health--;
                     Destroy(collision.gameObject);
+
+                    //End the game if the player's health <= 0
+                    GameOver();
                 }
             }
         }

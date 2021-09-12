@@ -34,7 +34,7 @@ public class Bullet : MonoBehaviour
         timer -= Time.deltaTime;
         if (timer <= 0) 
         {
-            Destroy(gameObject);
+           PhotonNetwork.Destroy(gameObject);
         }
     }
 
@@ -46,7 +46,6 @@ public class Bullet : MonoBehaviour
         if (wallBounceCounter < 0)
         {
             PhotonNetwork.Destroy(gameObject);
-            //Destroy(gameObject);
         }
     }
 }

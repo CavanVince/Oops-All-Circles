@@ -115,9 +115,7 @@ public class PlayerController : MonoBehaviour
             if (health <= 0)
             {
                 PhotonNetwork.Instantiate(deathParticles.name, transform.position, Quaternion.identity);
-                //Instantiate(deathParticles, transform.position, Quaternion.identity);
                 PhotonNetwork.Destroy(gameObject);
-                //Destroy(gameObject);
             }
     }
 

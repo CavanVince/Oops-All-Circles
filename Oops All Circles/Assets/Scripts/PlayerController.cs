@@ -5,13 +5,13 @@ using UnityEngine.UIElements;
 using Photon.Pun;
 using System.Diagnostics;
 
-enum Powerup 
+enum Powerup
 {
     normal,
     quad
 }
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, IPunObservable
 {
     public float moveSpeed;
     public float bulletSpeed;
@@ -74,72 +74,41 @@ public class PlayerController : MonoBehaviour
             //Calculate the vector
             Vector3 shootVector = mousePosition - playerPosition;
             shootVector.Normalize();
-
-            //Determine if the player has a power-up
-            switch (powerupStatus)
-            {
-                case Powerup.normal:   
-                    GameObject spawnedBullet = PhotonNetwork.Instantiate(bullet.name, transform.position, Quaternion.identity);
-                    //GameObject spawnedBullet = Instantiate(bullet, transform.position, Quaternion.identity);
-                    spawnedBullet.GetComponent<Rigidbody2D>().AddForce(shootVector * bulletSpeed, ForceMode2D.Impulse);
-                    spawnedBullet.GetComponent<Bullet>().ParentPlayer = gameObject;
-                    break;
-
-                case Powerup.quad:
-                    GameObject[] spawnedBullets = new GameObject[4];
-                    for (int i = 0; i < spawnedBullets.Length; i++) 
-                    {
-                        //THIS INSTANTIATION NEEDS TO BE MODIFIED DUE TO THE FACT THAT THE BULLETS SPAWN IN THE PLAYER
-                        spawnedBullets[i] = PhotonNetwork.Instantiate(bullet.name, transform.position, Quaternion.identity);
-                    }
-
-                    //Calculate the adjusted shoot vector for the other bullets
-                    Vector2 adjustedShootVector = shootVector;
-                    adjustedShootVector.x = -adjustedShootVector.x;
-
-                    spawnedBullets[0].GetComponent<Rigidbody2D>().AddForce(shootVector * bulletSpeed, ForceMode2D.Impulse);
-                    spawnedBullets[1].GetComponent<Rigidbody2D>().AddForce(-shootVector * bulletSpeed, ForceMode2D.Impulse);
-                    spawnedBullets[2].GetComponent<Rigidbody2D>().AddForce(adjustedShootVector * bulletSpeed, ForceMode2D.Impulse);
-                    spawnedBullets[3].GetComponent<Rigidbody2D>().AddForce(-adjustedShootVector * bulletSpeed, ForceMode2D.Impulse);
-                    break;
-            }
-
+            view.RPC("InstantiateBullet", RpcTarget.All, shootVector);
         }
     }
 
     /// <summary>
-    /// Determines if the game is over
+    /// RPC to spawn local bullets on both clients
     /// </summary>
-    void GameOver() 
+    /// <param name="shootVector">Vector that the bullet will travel on</param>
+    [PunRPC]
+    void InstantiateBullet(Vector3 shootVector)
     {
-            if (health <= 0)
-            {
-                PhotonNetwork.Instantiate(deathParticles.name, transform.position, Quaternion.identity);
-                PhotonNetwork.Destroy(gameObject);
-            }
+        GameObject spawnedBullet = Instantiate(bullet, transform.position, Quaternion.identity);
+        spawnedBullet.GetComponent<Rigidbody2D>().AddForce(shootVector * bulletSpeed, ForceMode2D.Impulse);
+        spawnedBullet.GetComponent<Bullet>().ParentPlayer = gameObject;
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    /// <summary>
+    /// Reduces the player's health and then determines if the game is over
+    /// </summary>
+    public void GameOver()
     {
-        //Only call if it is the client's player being collided with
-        if (view.IsMine)
+        health--;
+        if (health <= 0)
         {
-            if (collision.gameObject.CompareTag("Power-Up"))
-            {
-                powerupStatus = Powerup.quad;
-                Destroy(collision.gameObject);
-            }
-            else if (collision.gameObject.CompareTag("Bullet"))
-            {
-                if (collision.GetComponent<Bullet>().ParentPlayer != gameObject)
-                {
-                    health--;
-                    Destroy(collision.gameObject);
-
-                    //End the game if the player's health <= 0
-                    GameOver();
-                }
-            }
+            PhotonNetwork.Instantiate(deathParticles.name, transform.position, Quaternion.identity);
+            PhotonNetwork.Destroy(gameObject);
         }
+    }
+
+    /// <summary>
+    /// Have this here because Unity console started crying at me...
+    /// </summary>
+    /// <param name="stream"></param>
+    /// <param name="info"></param>
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
     }
 }

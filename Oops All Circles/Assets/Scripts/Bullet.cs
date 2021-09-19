@@ -9,9 +9,11 @@ public class Bullet : MonoBehaviour
     private float wallBounceCounter;
     private GameObject parentPlayer;
 
-    public GameObject ParentPlayer 
+    PhotonView view;
+
+    public GameObject ParentPlayer
     {
-        get 
+        get
         {
             return parentPlayer;
         }
@@ -25,17 +27,12 @@ public class Bullet : MonoBehaviour
     void Start()
     {
         wallBounceCounter = 1;
+        view = GetComponent<PhotonView>();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        //Decrement the timer and possibly destroy the bullet
-        timer -= Time.deltaTime;
-        if (timer <= 0) 
-        {
-           PhotonNetwork.Destroy(gameObject);
-        }
+        Destroy(gameObject, timer); //Destroy the bullet after a set amount of time
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -45,7 +42,16 @@ public class Bullet : MonoBehaviour
         //Determine if the ball hit two walls
         if (wallBounceCounter < 0)
         {
-            PhotonNetwork.Destroy(gameObject);
+            Destroy(gameObject);
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Player") && collision.gameObject != parentPlayer)
+        {
+            collision.GetComponent<PlayerController>().GameOver();
+            Destroy(gameObject);
         }
     }
 }

@@ -26,6 +26,9 @@ public class PlayerController : MonoBehaviour, IPunObservable
 
     PhotonView view;
 
+    private Vector3 networkPosition;
+    private double networkTimeStamp;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -95,11 +98,14 @@ public class PlayerController : MonoBehaviour, IPunObservable
     /// </summary>
     public void GameOver()
     {
-        health--;
-        if (health <= 0)
+        if (view.IsMine)
         {
-            PhotonNetwork.Instantiate(deathParticles.name, transform.position, Quaternion.identity);
-            PhotonNetwork.Destroy(gameObject);
+            health--;
+            if (health <= 0)
+            {
+                PhotonNetwork.Instantiate(deathParticles.name, transform.position, Quaternion.identity);
+                PhotonNetwork.Destroy(gameObject);
+            }
         }
     }
 

@@ -16,6 +16,9 @@ public class PlayerController : MonoBehaviour, IPunObservable
     public float moveSpeed;
     public float bulletSpeed;
 
+    public float shotTimer;
+    private bool canShoot;
+
     [SerializeField] private GameObject bullet;
     [SerializeField] private GameObject deathParticles;
 
@@ -26,9 +29,6 @@ public class PlayerController : MonoBehaviour, IPunObservable
 
     PhotonView view;
 
-    private Vector3 networkPosition;
-    private double networkTimeStamp;
-
     // Start is called before the first frame update
     void Start()
     {
@@ -38,6 +38,7 @@ public class PlayerController : MonoBehaviour, IPunObservable
         view = GetComponent<PhotonView>();
         powerupStatus = Powerup.normal;
         health = 1;
+        canShoot = true;
     }
 
     // Update is called once per frame
@@ -58,6 +59,8 @@ public class PlayerController : MonoBehaviour, IPunObservable
         }
     }
 
+    #region Movement
+
     /// <summary>
     /// Moves the player object based on the given user input.
     /// </summary>
@@ -66,18 +69,24 @@ public class PlayerController : MonoBehaviour, IPunObservable
         transform.Translate(Input.GetAxisRaw("Horizontal") * moveSpeed * Time.deltaTime, Input.GetAxisRaw("Vertical") * moveSpeed * Time.deltaTime, 0f);
     }
 
+    #endregion
+
+    #region Shooting
 
     /// <summary>
-    /// Instantiates a bullet prefab when the player left clicks
+    /// Instantiates a bullet prefab when the player left clicks and they aren't on cooldown
     /// </summary>
     void ShootBullet()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && canShoot == true)
         {
+            canShoot = false;
+
             //Calculate the vector
             Vector3 shootVector = mousePosition - playerPosition;
             shootVector.Normalize();
             view.RPC("InstantiateBullet", RpcTarget.All, shootVector);
+            StartCoroutine(ShotCooldown());
         }
     }
 
@@ -93,6 +102,19 @@ public class PlayerController : MonoBehaviour, IPunObservable
         spawnedBullet.GetComponent<Bullet>().ParentPlayer = gameObject;
     }
 
+    /// <summary>
+    /// Coroutine that starts the shot cooldown for the player
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator ShotCooldown()
+    {
+        yield return new WaitForSeconds(shotTimer);
+        canShoot = true;
+    }
+
+    #endregion
+
+    #region Logic
     /// <summary>
     /// Reduces the player's health and then determines if the game is over
     /// </summary>
@@ -117,4 +139,5 @@ public class PlayerController : MonoBehaviour, IPunObservable
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
     }
+    #endregion
 }

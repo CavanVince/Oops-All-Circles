@@ -9,12 +9,12 @@ public class CreateAndJoinRooms : MonoBehaviourPunCallbacks
     [SerializeField] private InputField createInput;
     [SerializeField] private InputField joinInput;
 
-    public void CreateRoom() 
+    public void CreateRoom()
     {
-        PhotonNetwork.CreateRoom(createInput.text);
+            PhotonNetwork.CreateRoom(createInput.text);
     }
 
-    public void JoinRoom() 
+    public void JoinRoom()
     {
         PhotonNetwork.JoinRoom(joinInput.text);
     }

@@ -42,6 +42,8 @@ MonoBehaviour:
   - InstantiateBullet
   - GameOver
   - DestroyBullet
+  - StartCountdown
+  - CountdownRPC
   DisableAutoOpenWizard: 1
-  ShowSettings: 0
+  ShowSettings: 1
   DevRegionSetOnce: 0

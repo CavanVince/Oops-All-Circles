@@ -16,7 +16,7 @@ public class PlayerController : MonoBehaviour, IPunObservable
     public float moveSpeed;
     public float bulletSpeed;
 
-    public float shotTimer;
+    public float cooldownTimer;
     private bool canShoot;
 
     [SerializeField] private GameObject bullet;
@@ -108,7 +108,7 @@ public class PlayerController : MonoBehaviour, IPunObservable
     /// <returns></returns>
     IEnumerator ShotCooldown()
     {
-        yield return new WaitForSeconds(shotTimer);
+        yield return new WaitForSeconds(cooldownTimer);
         canShoot = true;
     }
 

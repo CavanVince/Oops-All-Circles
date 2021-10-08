@@ -1,15 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Photon.Pun;
 
 public class Bullet : MonoBehaviour
 {
     public float timer;
     private float wallBounceCounter;
     private GameObject parentPlayer;
-
-    PhotonView view;
 
     public GameObject ParentPlayer
     {
@@ -27,7 +24,6 @@ public class Bullet : MonoBehaviour
     void Start()
     {
         wallBounceCounter = 1;
-        view = GetComponent<PhotonView>();
     }
 
     void Update()

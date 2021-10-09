@@ -21,13 +21,23 @@ public class SpawnPlayers : MonoBehaviour
         if (PhotonNetwork.CurrentRoom.PlayerCount == 1)
         {
             spawnPosition = spawnOne.position;
+
+            //Save the player object in the start timer so that it can enable movement later
+            startTimer.Player = PhotonNetwork.Instantiate(playerPrefab.name, spawnPosition, Quaternion.identity).GetComponent<PlayerController>().GetComponent<PlayerController>();
+            startTimer.Player.enabled = false;
         }
         else
         {
             spawnPosition = spawnTwo.position;
+
+            //Save the player object in the start timer so that it can enable movement later
+            startTimer.Player = PhotonNetwork.Instantiate(playerPrefab.name, spawnPosition, Quaternion.identity).GetComponent<PlayerController>().GetComponent<PlayerController>();
+            startTimer.Player.enabled = false;
+
+            //RPC to start the game timer countdown
             view.RPC("CountdownRPC", RpcTarget.All);
         }
-        PhotonNetwork.Instantiate(playerPrefab.name, spawnPosition, Quaternion.identity).GetComponent<PlayerController>();
+
     }
 
     /// <summary>

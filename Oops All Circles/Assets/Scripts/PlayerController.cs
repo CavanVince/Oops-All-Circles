@@ -13,17 +13,23 @@ enum Powerup
 
 public class PlayerController : MonoBehaviour, IPunObservable
 {
+    //Speed variables
     public float moveSpeed;
     public float bulletSpeed;
 
+    //Bullet related variables
     public float cooldownTimer;
     private bool canShoot;
 
+    //Instantiable prefabs
     [SerializeField] private GameObject bullet;
     [SerializeField] private GameObject deathParticles;
 
+    //Position variables
     private Vector2 playerPosition;
     private Vector2 mousePosition;
+
+    //Player status variables
     private Powerup powerupStatus;
     private int health;
 

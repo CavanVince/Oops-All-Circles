@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class StartTimer : MonoBehaviour
 {
+    [SerializeField] private GameManager gameManager;
+
     private float timer = 3;
     private float fadeTimer = 1;
     private bool countingDown;
@@ -12,24 +14,20 @@ public class StartTimer : MonoBehaviour
     private Text timerText;
     private PlayerController player;
 
-    public PlayerController Player 
+    #region Properties
+    public PlayerController Player
     {
-        get 
-        {
-            return player;
-        }
-
-        set 
+        set
         {
             player = value;
         }
     }
+    #endregion
 
     private void Start()
     {
         timerText = GetComponent<Text>();
         countingDown = true;
-        Player = null;
     }
 
     /// <summary>
@@ -60,10 +58,10 @@ public class StartTimer : MonoBehaviour
     /// Fades out the timer text
     /// </summary>
     /// <returns></returns>
-    private IEnumerator FadeOut() 
+    private IEnumerator FadeOut()
     {
         //Loop for a set amount of time and fade the text alpha channel
-        while (timerText.color.a > 0) 
+        while (timerText.color.a > 0)
         {
             timerText.color = new Color(timerText.color.r, timerText.color.g, timerText.color.b, fadeTimer);
             yield return new WaitForSeconds(.05f);
@@ -71,7 +69,7 @@ public class StartTimer : MonoBehaviour
         }
 
         //If the alpha is zero, remove the text and set the alpha back to 1
-        if (timerText.color.a <= 0) 
+        if (timerText.color.a <= 0)
         {
             timerText.text = "";
             timerText.color = new Color(timerText.color.r, timerText.color.g, timerText.color.b, 1);

@@ -33,7 +33,9 @@ public class PlayerController : MonoBehaviour, IPunObservable
     private Powerup powerupStatus;
     private int health;
 
-    PhotonView view;
+    //Component Variables
+    private GameManager gameManager;
+    private PhotonView view;
 
     // Start is called before the first frame update
     void Start()
@@ -41,6 +43,7 @@ public class PlayerController : MonoBehaviour, IPunObservable
         //Increase the amount of times the server is updated
         PhotonNetwork.SerializationRate = 50;
 
+        gameManager = FindObjectOfType<GameManager>();
         view = GetComponent<PhotonView>();
         powerupStatus = Powerup.normal;
         health = 1;
@@ -122,7 +125,7 @@ public class PlayerController : MonoBehaviour, IPunObservable
 
     #region Logic
     /// <summary>
-    /// Reduces the player's health and then determines if the game is over
+    /// Reduces the player's health and then tells the game manager if the round is over
     /// </summary>
     public void GameOver()
     {
@@ -131,6 +134,7 @@ public class PlayerController : MonoBehaviour, IPunObservable
             health--;
             if (health <= 0)
             {
+                gameManager.EndRound();
                 PhotonNetwork.Instantiate(deathParticles.name, transform.position, Quaternion.identity);
                 PhotonNetwork.Destroy(gameObject);
             }

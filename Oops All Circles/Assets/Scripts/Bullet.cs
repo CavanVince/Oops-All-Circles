@@ -8,6 +8,7 @@ public class Bullet : MonoBehaviour
     private float wallBounceCounter;
     private GameObject parentPlayer;
 
+    #region Properties
     public GameObject ParentPlayer
     {
         get
@@ -19,6 +20,7 @@ public class Bullet : MonoBehaviour
             parentPlayer = value;
         }
     }
+    #endregion
 
     // Start is called before the first frame update
     void Start()
